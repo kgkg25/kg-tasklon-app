@@ -1,0 +1,27 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+name = "TasklonAppKg"
+client_id = "105b1bb7b072ceb214d6c1f6b3ce1605"
+application_url = "https://peninsula-jose-intelligence-literary.trycloudflare.com"
+embedded = true
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "write_products"
+
+[auth]
+redirect_urls = [
+  "https://peninsula-jose-intelligence-literary.trycloudflare.com/auth/callback",
+  "https://peninsula-jose-intelligence-literary.trycloudflare.com/auth/shopify/callback",
+  "https://peninsula-jose-intelligence-literary.trycloudflare.com/api/auth/callback"
+]
+
+[webhooks]
+api_version = "2024-01"
+
+[pos]
+embedded = false
+
+[build]
+automatically_update_urls_on_dev = true
+dev_store_url = "kgkg-dev.myshopify.com"
