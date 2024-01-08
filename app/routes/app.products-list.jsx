@@ -1,68 +1,54 @@
+
 import { useLoaderData } from "@remix-run/react";
-import { admin } from "@shopify/shopify-api"
+import { json } from "@remix-run/node";
 import { Card, Layout, List, Page } from "@shopify/polaris";
-import { apiVersion, authenticate } from "~/shopify.server";
-
-
-export const query =`
-{
-  products(first: 10, reverse: false) {
-    edges {
-      node {
-        id
-        title
-        handle
-        resourcePublicationOnCurrentPublication {
-          publication {
-            name
-            id
-          }
-          publishDate
-          isPublished
-        }
-      }
-    }
-  }
-}
-`
+import { authenticate } from "~/shopify.server";
 
 
 export const loader = async ({ request }) => {
+    const { admin } = await authenticate.admin(request);
 
-    const { session } = await admin.rest.resources.ProductListing.all({
-      session: session,
-    });
-    const {shop, accessToken } = session;
+    console.log(admin);
 
     try{
 
-        const response = await fetch(`https://${shop}/admin/api/${apiVersion}/graphql.json`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/graphql",
-                "X-Shopify-Access-Token": accessToken
-            },
-            body: query
-
-        });
-
-        if(response.ok){
-            const data = await response.json()
-
-            const {
-                data: {
-                    collections: { edges }  
+    const response = await admin.graphql(
+        `#graphql
+        {
+            collections(first: 10){
+                edges{
+                    node{
+                        id
+                        handle
+                        title
+                        description
+                    }
                 }
-            } = data;
-            return edges
-        }
+                pageInfo {
+                    hasNextPage
+                }
+            }
+        }`,
+    );
 
-        return null
+    if(response.ok){
+        const data = await response.json()
+
+        const {
+            data: {
+                collections: { edges }  
+            }
+        } = data;
+        return edges
+    }
+
+    return null
+
+    return null;
 
     } catch(err){
         console.log(err)
     }
-
 }
 
 
@@ -90,7 +76,6 @@ const Collections = () => {
                             )
                         })
                     }
-
                 </List>
             </Card>
 

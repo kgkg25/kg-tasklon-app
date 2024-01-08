@@ -2,7 +2,7 @@
 
 name = "TasklonAppKg"
 client_id = "105b1bb7b072ceb214d6c1f6b3ce1605"
-application_url = "https://peninsula-jose-intelligence-literary.trycloudflare.com"
+application_url = "https://marker-responsibilities-suse-ranks.trycloudflare.com"
 embedded = true
 
 [access_scopes]
@@ -11,9 +11,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://peninsula-jose-intelligence-literary.trycloudflare.com/auth/callback",
-  "https://peninsula-jose-intelligence-literary.trycloudflare.com/auth/shopify/callback",
-  "https://peninsula-jose-intelligence-literary.trycloudflare.com/api/auth/callback"
+  "https://marker-responsibilities-suse-ranks.trycloudflare.com/auth/callback",
+  "https://marker-responsibilities-suse-ranks.trycloudflare.com/auth/shopify/callback",
+  "https://marker-responsibilities-suse-ranks.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
