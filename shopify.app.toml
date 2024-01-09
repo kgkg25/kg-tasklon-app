@@ -2,18 +2,18 @@
 
 name = "TasklonAppKg"
 client_id = "105b1bb7b072ceb214d6c1f6b3ce1605"
-application_url = "https://marker-responsibilities-suse-ranks.trycloudflare.com"
+application_url = "https://challenge-lou-absence-theories.trycloudflare.com"
 embedded = true
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "write_products"
+scopes = "write_products, read_products, read_product_listings, read_publications"
 
 [auth]
 redirect_urls = [
-  "https://marker-responsibilities-suse-ranks.trycloudflare.com/auth/callback",
-  "https://marker-responsibilities-suse-ranks.trycloudflare.com/auth/shopify/callback",
-  "https://marker-responsibilities-suse-ranks.trycloudflare.com/api/auth/callback"
+  "https://challenge-lou-absence-theories.trycloudflare.com/auth/callback",
+  "https://challenge-lou-absence-theories.trycloudflare.com/auth/shopify/callback",
+  "https://challenge-lou-absence-theories.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
