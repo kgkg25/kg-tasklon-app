@@ -1,34 +1,50 @@
 
 import { useLoaderData } from "@remix-run/react";
-import { json } from "@remix-run/node";
-import { Card, Layout, List, Page } from "@shopify/polaris";
+import { 
+    Card,
+    Text,
+    Thumbnail,
+    IndexTable,
+    useIndexResourceState,
+    List,
+    Badge } from "@shopify/polaris";
 import { authenticate } from "~/shopify.server";
 
 
 export const loader = async ({ request }) => {
     const { admin } = await authenticate.admin(request);
 
-    console.log(admin);
-
     try{
 
     const response = await admin.graphql(
-        `#graphql
-        {
-            collections(first: 10){
-                edges{
-                    node{
-                        id
-                        handle
-                        title
-                        description
-                    }
+    `#graphql
+    query {
+        products(first: 30) {
+          edges {
+            node {
+              id
+              title
+              handle
+              onlineStoreUrl
+              onlineStorePreviewUrl
+              status
+              publicationCount
+              featuredImage {
+                url
+              }
+              resourcePublications(first: 10) {
+                nodes {
+                  isPublished
+                  publication {
+                    name
+                    id
+                  }
                 }
-                pageInfo {
-                    hasNextPage
-                }
+              }
             }
-        }`,
+          }
+        }
+      }`,
     );
 
     if(response.ok){
@@ -36,15 +52,14 @@ export const loader = async ({ request }) => {
 
         const {
             data: {
-                collections: { edges }  
+                products: { edges }
             }
         } = data;
+
         return edges
     }
 
     return null
-
-    return null;
 
     } catch(err){
         console.log(err)
@@ -52,37 +67,92 @@ export const loader = async ({ request }) => {
 }
 
 
-const Collections = () => {
-    const collections = useLoaderData()
-    console.log(collections, 'collections')
+const ProductsTable = () => {
+    const products = useLoaderData();
+    const {selectedResources, allResourcesSelected, handleSelectionChange} = useIndexResourceState(products);
+
+    console.log(products, 'products')
+
+    const rowMarkup = products.map(
+        (
+            {node},
+            index,
+        ) => { 
+
+            const publicationNames = [node.resourcePublications.nodes.map(
+                (publicationNode) => <List.Item>{publicationNode.publication.name}</List.Item>
+            )
+            ]
+            
+        return (
+            <IndexTable.Row
+            id={node.id}
+            key={node.id}
+            selected={selectedResources.includes(node.id)}
+            position={index}
+            >
+            <IndexTable.Cell>
+            {node.featuredImage && (
+            <Thumbnail
+            source={node.featuredImage.url}
+            alt={node.featuredImage.altText}
+            />
+            ) || (
+            <Thumbnail
+            source="https://cdn.shopify.com/s/files/1/0533/2089/files/placeholder-images-image_large.png?format=webp&v=1530129081"
+            alt="product alt"
+            />
+            )}
+            </IndexTable.Cell>
+            <IndexTable.Cell>
+                <Text variant="bodyMd" fontWeight="bold" as="span">
+                <a href={ node.onlineStorePreviewUrl } target="_blank">{node.title}</a>
+                </Text>
+            </IndexTable.Cell>
+            <IndexTable.Cell>{node.publicationCount}</IndexTable.Cell>
+            <IndexTable.Cell>
+            <List gap="extraTight">
+            {publicationNames}
+            </List>
+            </IndexTable.Cell>
+            <IndexTable.Cell>
+                {node.status && node.status === 'Active' ? <Badge tone="success">{node.status}</Badge> : node.status ? <Badge>{node.status}</Badge> : null}
+            </IndexTable.Cell>
+            </IndexTable.Row>
+        )
+      }   
+    );
+
+      const resourceName = {
+        singular: 'product',
+        plural: 'products',
+      };
 
   return (
-  <Page>
-    <Layout>
-        <Layout.Section>
-            <Card><h1>hello world</h1></Card>
-        </Layout.Section>
-        <Layout.Section>
-            <Card>
-                <List type="bullet" gap="loose">
-                    {
-                        collections.map((edge) => {
-                            const {node: collection } = edge;
-                            return (
-                                <List.Item key={collection.id}>
-                                    <h2>{collection.title}</h2>
-                                    <h2>{collection.description}</h2>
-                                </List.Item>
-                            )
-                        })
-                    }
-                </List>
-            </Card>
+   
 
-        </Layout.Section>
-    </Layout>
-</Page>
+    
+    <Card>
+        <IndexTable
+        resourceName={resourceName}
+        itemCount={products.length}
+        selectedItemsCount={
+            allResourcesSelected ? 'All' : selectedResources.length
+        }
+        onSelectionChange={handleSelectionChange}
+        headings={[
+            {title: ''},
+            {title: 'Product Title'},
+            {title: 'Channels Count'},
+            {title: 'Active Sales Channels'},
+            {title: 'Status'},
+        ]}
+        >
+        {rowMarkup}
+        </IndexTable>
+    </Card>
+    
   );
 };
 
-export default Collections;
+export default ProductsTable;
