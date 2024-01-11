@@ -7,7 +7,9 @@ import {
     IndexTable,
     useIndexResourceState,
     List,
-    Badge } from "@shopify/polaris";
+    Badge, 
+    Page,
+    Layout} from "@shopify/polaris";
 import { authenticate } from "~/shopify.server";
 
 
@@ -19,7 +21,7 @@ export const loader = async ({ request }) => {
     const response = await admin.graphql(
     `#graphql
     query {
-        products(first: 30) {
+        products(first: 40) {
           edges {
             node {
               id
@@ -131,8 +133,10 @@ const ProductsTable = () => {
   return (
    
 
-    
-    <Card>
+    <Page>
+      <ui-title-bar title="Products List Page" />
+      
+      
         <IndexTable
         resourceName={resourceName}
         itemCount={products.length}
@@ -150,8 +154,7 @@ const ProductsTable = () => {
         >
         {rowMarkup}
         </IndexTable>
-    </Card>
-    
+        </Page>
   );
 };
 
